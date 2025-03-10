@@ -17,6 +17,8 @@ Dashboard-style layout with clear visual indicators for stock levels, alerts, an
 Mobile-friendly & responsive for easy access on any device.
 
 
+
+
 2. Key Pages & Features
 
 1. Login & Signup Page
@@ -44,6 +46,10 @@ Quick search bar to find lab items instantly.
 Graphical reports on inventory usage trends.
 
 
+
+
+
+
 3. Inventory Management Page
 
 Table/List View of all lab supplies and equipment.
@@ -51,6 +57,9 @@ Table/List View of all lab supplies and equipment.
 Sort & filter options by category, stock level, or urgency.
 
 Auto-update feature when items are used or restocked.
+
+
+
 
 
 4. Alerts & Notifications Page
@@ -62,6 +71,9 @@ Equipment maintenance reminders with history logs.
 Expiring chemical alerts to prevent hazardous situations.
 
 
+
+
+
 5. Request & Approval System
 
 Students/lab assistants request items for experiments.
@@ -69,6 +81,10 @@ Students/lab assistants request items for experiments.
 Lab manager approves/rejects requests.
 
 Track request status in a simple list.
+
+
+
+
 
 
 6. Reports & Analytics Page
@@ -80,6 +96,10 @@ Predictive analysis for future stock requirements.
 Downloadable reports for admin review.
 
 
+
+
+
+
 7. Settings & User Management
 
 Role-based access (Admins manage inventory, students request items).
@@ -87,3 +107,7 @@ Role-based access (Admins manage inventory, students request items).
 Theme customization (light/dark mode).
 
 Multi-language support (optional).
+
+
+
+
