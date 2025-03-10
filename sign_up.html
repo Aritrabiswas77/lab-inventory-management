@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabTrack - Sign Up</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f3f4f6;
+            --dark: #1f2937;
+            --gray: #9ca3af;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Signup Container */
+        .signup-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .signup-header h2 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-header p {
+            color: var(--gray);
+        }
+
+        /* Form */
+        .signup-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group .hint {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+        }
+
+        .form-group .password-strength {
+            height: 4px;
+            background-color: var(--light);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength .strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .role-option {
+            flex: 1;
+            border: 1px solid var(--gray);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .role-option:hover {
+            border-color: var(--primary);
+        }
+
+        .role-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .role-option .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .role-option h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .role-option p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* MFA Section */
+        .mfa-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light);
+            grid-column: span 2;
+        }
+
+        .mfa-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mfa-option {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--light);
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .mfa-option:hover {
+            border-color: var(--primary);
+        }
+
+        .mfa-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .mfa-option i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .mfa-option h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mfa-option p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Terms */
+        .terms {
+            grid-column: span 2;
+            margin-top: 1.5rem;
+        }
+
+        .terms label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .terms input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Buttons */
+        .form-buttons {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding: 2rem;
+            background-color: var(--dark);
+            color: var(--light);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .signup-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .signup-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width,
+            .mfa-section,
+            .terms,
+            .form-buttons {
+                grid-column: 1;
+            }
+
+            .role-options,
+            .mfa-options {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Floating Labels (Optional) */
+        .form-group.floating {
+            position: relative;
+        }
+
+        .form-group.floating input {
+            height: 56px;
+            padding: 1.25rem 0.75rem 0.25rem;
+        }
+
+        .form-group.floating label {
+            position: absolute;
+            top: 0;
+            left: 0.75rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            pointer-events: none;
+        }
+
+        .form-group.floating input:focus + label,
+        .form-group.floating input:not(:placeholder-shown) + label {
+            transform: translateY(-50%) scale(0.85);
+            color: var(--primary);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="#" class="logo">
+            <img src="/api/placeholder/40/40" alt="LabTrack Logo">
+            <h1>LabTrack</h1>
+        </a>
+        <div class="nav-links">
+          
+            <a href="http://127.0.0.1:5500/sign_in.html">Login</a>
+        </div>
+    </header>
+
+    <!-- Signup Container -->
+    <div class="signup-container fade-in">
+        <div class="signup-header">
+            <h2>Create Your LabTrack Account</h2>
+            <p>Join our lab inventory management system to streamline your lab processes</p>
+        </div>
+
+        <form class="signup-form">
+            <!-- Personal Information -->
+            <div class="form-group">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" name="first-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" name="last-name" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+                <div class="hint">We'll send a verification link to this email</div>
+            </div>
+
+            <div class="form-group">
+                <label for="institution">University / Institution</label>
+                <input type="text" id="institution" name="institution" required>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department</label>
+                <select id="department" name="department" required>
+                    <option value="">Select Department</option>
+                    <option value="chemistry">Chemistry</option>
+                    <option value="biology">Biology</option>
+                    <option value="physics">Physics</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="medicine">Medicine</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- Account Information -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                <div class="hint">Choose a unique username for login</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <div class="password-strength">
+                    <div class="strength-meter" style="width: 70%; background-color: #10b981;"></div>
+                </div>
+                <div class="hint">Strong password: Use 8+ characters with letters, numbers & symbols</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="form-group full-width">
+                <label>Select Your Role</label>
+                <div class="role-options">
+                    <div class="role-option selected" id="role-admin">
+                        <div class="icon"><i class="fas fa-user-shield"></i></div>
+                        <h4>Administrator</h4>
+                        <p>Full access to manage inventory, users, and settings</p>
+                    </div>
+                    <div class="role-option" id="role-assistant">
+                        <div class="icon"><i class="fas fa-user-cog"></i></div>
+                        <h4>Lab Assistant</h4>
+                        <p>Manage inventory and process student requests</p>
+                    </div>
+                    <div class="role-option" id="role-student">
+                        <div class="icon"><i class="fas fa-user-graduate"></i></div>
+                        <h4>Student</h4>
+                        <p>Request lab supplies and view available inventory</p>
+                    </div>
+                </div>
+                <input type="hidden" id="selected-role" name="role" value="admin">
+            </div>
+
+            <!-- Multi-Factor Authentication -->
+            <div class="mfa-section">
+                <h3>Enhance Your Security</h3>
+                <p>Choose a multi-factor authentication method (optional but recommended)</p>
+                <div class="mfa-options">
+                    <div class="mfa-option" id="mfa-app">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h4>Authenticator App</h4>
+                        <p>Use Google Authenticator, Microsoft Authenticator, or similar apps</p>
+                    </div>
+                    <div class="mfa-option" id="mfa-sms">
+                        <i class="fas fa-sms"></i>
+                        <h4>SMS Verification</h4>
+                        <p>Receive verification codes via text message</p>
+                    </div>
+                    <div class="mfa-option" id="mfa-email">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Email Verification</h4>
+                        <p>Receive verification codes via email</p>
+                    </div>
+                </div>
+                <input type="hidden" id="selected-mfa" name="mfa-method" value="">
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="terms">
+                <label>
+                    <input type="checkbox" id="terms" name="terms" required>
+                    I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="form-buttons">
+                <button type="button" class="btn btn-outline" id="back-btn">Back to Login</button>
+                <button type="submit" class="btn btn-primary" id="signup-btn">Create Account</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Help Center</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-text">
+                &copy; 2025 LabTrack. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Role Selection
+        const roleOptions = document.querySelectorAll('.role-option');
+        const selectedRoleInput = document.getElementById('selected-role');
+
+        roleOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                roleOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                option.classList.add('selected');
+                
+                // Update hidden input value
+                const roleId = option.id.split('-')[1]; // Extract role value from id
+                selectedRoleInput.value = roleId;
+            });
+        });
+
+        // MFA Selection
+        const mfaOptions = document.querySelectorAll('.mfa-option');
+        const selectedMfaInput = document.getElementById('selected-mfa');
+
+        mfaOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Toggle selected class on clicked option
+                option.classList.toggle('selected');
+                
+                // If selected, set the selected-mfa value
+                if (option.classList.contains('selected')) {
+                    // Remove selected class from other options
+                    mfaOptions.forEach(opt => {
+                        if (opt !== option) opt.classList.remove('selected');
+                    });
+                    
+                    const mfaType = option.id.split('-')[1]; // Extract mfa type from id
+                    selectedMfaInput.value = mfaType;
+                } else {
+                    selectedMfaInput.value = '';
+                }
+            });
+        });
+
+        // Password Strength Meter
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.querySelector('.strength-meter');
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            
+            // Simple password strength calculation
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            
+            // Complexity checks
+            if (/[A-Z]/.test(password)) strength += 25; // Has uppercase
+            if (/[0-9]/.test(password)) strength += 25; // Has number
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25; // Has special char
+            
+            // Update strength meter
+            strengthMeter.style.width = `${strength}%`;
+            
+            // Change color based on strength
+            if (strength < 50) {
+                strengthMeter.style.backgroundColor = '#ef4444'; // Red for weak
+            } else if (strength < 75) {
+                strengthMeter.style.backgroundColor = '#f59e0b'; // Yellow for medium
+            } else {
+                strengthMeter.style.backgroundColor = '#10b981'; // Green for strong
+            }
+        });
+
+        // Form Submission
+        const signupForm = document.querySelector('.signup-form');
+        const signupBtn = document.getElementById('signup-btn');
+
+        signupBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Perform validation
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (!document.getElementById('terms').checked) {
+                alert('Please agree to the Terms of Service and Privacy Policy');
+                return;
+            }
+            
+            // Simulate form submission
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating Account...';
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                alert('Account created successfully! You will be redirected to the login page.');
+                // In a real application, redirect to login or dashboard
+                window.location.href = 'index2.html';
+            }, 1500);
+        });
+
+        // Back button
+        document.getElementById('back-btn').addEventListener('click', () => {
+            // In a real application, redirect to login page
+            window.location.href = 'index2.html';
+        });
+    </script>
+</body>
+</html>

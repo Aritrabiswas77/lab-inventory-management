@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabTrack - Inventory Management</title>
+    <style>
+        :root {
+            --primary: #2c7be5;
+            --secondary: #6c757d;
+            --success: #10b981;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --body-bg: #f5f8fb;
+            --sidebar-width: 250px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI',  sans-serif;
+        }
+        
+        body {
+            background-color: var(--body-bg);
+            color: var(--dark);
+        }
+        
+        .container {
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo img {
+            width: 40px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--secondary);
+        }
+        
+        .nav-item.active {
+            background-color: rgba(44, 123, 229, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(44, 123, 229, 0.05);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .user-info {
+            position: absolute;
+            bottom: 1.5rem;
+            width: calc(100% - 3rem);
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-top: 1px solid #edf2f9;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .user-details {
+            flex-grow: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: 1.5rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 350px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #e3ebf6;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(44, 123, 229, 0.25);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+        }
+        
+        /* Dashboard Widgets */
+        .widgets-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .widget {
+            background-color: white;
+            border-radius: 5px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .widget-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .widget-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .widget-subtitle {
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+        
+        .progress-container {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .progress-bar.green {
+            background-color: var(--success);
+        }
+        
+        .progress-bar.yellow {
+            background-color: var(--warning);
+        }
+        
+        .progress-bar.red {
+            background-color: var(--danger);
+        }
+        
+        /* Charts Section */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 5px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        /* Inventory Table */
+        .inventory-container {
+            background-color: white;
+            border-radius: 5px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .inventory-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-dropdown {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e3ebf6;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: var(--dark);
+            background-color: white;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .inventory-table th, .inventory-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e3ebf6;
+        }
+        
+        .inventory-table th {
+            font-weight: 600;
+            color: var(--secondary);
+            background-color: #f8f9fa;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: #f8f9fc;
+        }
+        
+        .status-badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-badge.yellow {
+            background-color: rgba(246, 194, 62, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-badge.red {
+            background-color: rgba(231, 74, 59, 0.1);
+            color: var(--danger);
+        }
+        
+        .action-btn {
+            padding: 0.35rem 0.65rem;
+            border: none;
+            border-radius: 3px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Notifications Panel */
+        .notifications-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            padding: 1.5rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .notifications-panel.active {
+            right: 0;
+        }
+        
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .notifications-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e3ebf6;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--secondary);
+        }
+        
+        .notification-content {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Report Problem Panel */
+        .report-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            padding: 1.5rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .report-panel.active {
+            right: 0;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .report-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .report-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-input, .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e3ebf6;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(44, 123, 229, 0.25);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-submit {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .form-submit:hover {
+            background-color: #2468c0;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .widgets-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .report-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .widgets-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .notifications-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-flask" style="font-size: 28px; color: var(--primary);"></i>
+                <div class="logo-text">LabTrack</div>
+            </div>
+            
+            <div class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </div>
+            
+            <div class="nav-item" data-page="inventory">
+                <i class="fas fa-boxes"></i>
+                <span>Inventory</span>
+            </div>
+            
+            <div class="nav-item" data-page="alerts">
+                <i class="fas fa-bell"></i>
+                <span>Alerts</span>
+            </div>
+            
+            <div class="nav-item" data-page="requests">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Requests</span>
+            </div>
+            
+            <div class="nav-item" data-page="reports" id="reportMenuBtn">
+                <i class="fas fa-chart-line"></i>
+                <span>Report Problem</span>
+            </div>
+            
+            <div class="nav-item" data-page="logout">
+                <i class="fas fa-sign-out"></i>
+                <span>logout</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">AB</div>
+                <div class="user-details">
+                    <div class="user-name">Aritra Biswas</div>
+                    <div class="user-role">Lab Administrator</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search for lab items...">
+                </div>
+            </div>
+            
+            <!-- Dashboard Widgets -->
+            <div class="widgets-container">
+                <div class="widget">
+                    <div class="widget-title">Total Lab Supplies</div>
+                    <div class="widget-value">487</div>
+                    <div class="widget-subtitle">25 items need restocking</div>
+                    <div class="progress-container">
+                        <div class="progress-bar green" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div class="widget">
+                    <div class="widget-title">Equipment Status</div>
+                    <div class="widget-value">98%</div>
+                    <div class="widget-subtitle">3 items need maintenance</div>
+                    <div class="progress-container">
+                        <div class="progress-bar green" style="width: 98%;"></div>
+                    </div>
+                </div>
+                
+                <div class="widget">
+                    <div class="widget-title">Pending Requests</div>
+                    <div class="widget-value">12</div>
+                    <div class="widget-subtitle">5 require urgent attention</div>
+                    <div class="progress-container">
+                        <div class="progress-bar yellow" style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts -->
+            <div class="charts-container">
+                <div class="chart-container">
+                    <div class="chart-title">Inventory Usage Trends</div>
+                    <canvas id="usageChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Stock Status</div>
+                    <canvas id="stockChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+            
+            <!-- Inventory Table -->
+            <div class="inventory-container">
+                <div class="inventory-header">
+                    <div class="inventory-title">Critical Stock Items</div>
+                    
+                    <div class="filter-container">
+                        <select class="filter-dropdown">
+                            <option>All Categories</option>
+                            <option>Chemicals</option>
+                            <option>Glassware</option>
+                            <option>Equipment</option>
+                            <option>Safety Items</option>
+                        </select>
+                        
+                        <select class="filter-dropdown">
+                            <option>All Status</option>
+                            <option>In Stock</option>
+                            <option>Low Stock</option>
+                            <option>Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sodium Hydroxide</td>
+                            <td>Chemicals</td>
+                            <td>3 bottles</td>
+                            <td>10 bottles</td>
+                            <td><span class="status-badge red">Out of Stock</span></td>
+                            <td><button class="action-btn">Order</button></td>
+                        </tr>
+                        <tr>
+                            <td>Microscope Slides</td>
+                            <td>Lab Supplies</td>
+                            <td>25 boxes</td>
+                            <td>30 boxes</td>
+                            <td><span class="status-badge yellow">Low Stock</span></td>
+                            <td><button class="action-btn">Order</button></td>
+                        </tr>
+                        <tr>
+                            <td>Bunsen Burners</td>
+                            <td>Equipment</td>
+                            <td>5 units</td>
+                            <td>8 units</td>
+                            <td><span class="status-badge yellow">Low Stock</span></td>
+                            <td><button class="action-btn">Order</button></td>
+                        </tr>
+                        <tr>
+                            <td>Ethanol (95%)</td>
+                            <td>Chemicals</td>
+                            <td>12 bottles</td>
+                            <td>15 bottles</td>
+                            <td><span class="status-badge green">In Stock</span></td>
+                            <td><button class="action-btn">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Safety Goggles</td>
+                            <td>Safety Items</td>
+                            <td>8 units</td>
+                            <td>20 units</td>
+                            <td><span class="status-badge yellow">Low Stock</span></td>
+                            <td><button class="action-btn">Order</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications Panel -->
+    <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-header">
+            <div class="notifications-title">Notifications</div>
+            <button class="close-btn" id="closeNotifications">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notification-item">
+            <div class="notification-title">Low Stock Alert</div>
+            <div class="notification-time">Today, 10:45 AM</div>
+            <div class="notification-content">Microscope Slides are running low. Current stock: 25 boxes.</div>
+        </div>
+        
+        <div class="notification-item">
+            <div class="notification-title">Equipment Maintenance</div>
+            <div class="notification-time">Today, 09:30 AM</div>
+            <div class="notification-content">Centrifuge #3 is due for maintenance check.</div>
+        </div>
+        
+        <div class="notification-item">
+            <div class="notification-title">Request Approved</div>
+            <div class="notification-time">Yesterday, 04:15 PM</div>
+            <div class="notification-content">Dr. Smith's request for 500ml Hydrochloric Acid has been approved.</div>
+        </div>
+        
+        <div class="notification-item">
+            <div class="notification-title">Chemical Expiration</div>
+            <div class="notification-time">Yesterday, 01:20 PM</div>
+            <div class="notification-content">Batch #A452 of Potassium Permanganate expires in 15 days.</div>
+        </div>
+    </div>
+    
+    <!-- Report Problem Panel -->
+    <div class="report-panel" id="reportPanel">
+        <div class="report-header">
+            <div class="report-title">Report a Problem</div>
+            <button class="close-btn" id="closeReport">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form class="report-form" id="reportForm">
+            <div class="form-group">
+                <label for="fullName" class="form-label">Full Name</label>
+                <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="studentId" class="form-label">Student ID</label>
+                <input type="text" id="studentId" class="form-input" placeholder="Enter your student ID" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="problemType" class="form-label">Problem Type</label>
+                <select id="problemType" class="form-input" required>
+                    <option value="">Select problem type</option>
+                    <option value="missing">Missing Equipment</option>
+                    <option value="damaged">Damaged Equipment</option>
+                    <option value="shortage">Chemical Shortage</option>
+                    <option value="safety">Safety Concern</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="problemMessage" class="form-label">Describe the Problem</label>
+                <textarea id="problemMessage" class="form-textarea" placeholder="Please provide details about the problem..." required></textarea>
+            </div>
+            
+            <button type="submit" class="form-submit">Submit Report</button>
+        </form>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Toggle Notifications Panel
+        document.querySelector('[data-page="alerts"]').addEventListener('click', function() {
+            document.getElementById('notificationsPanel').classList.add('active');
+            // Close report panel if open
+            document.getElementById('reportPanel').classList.remove('active');
+        });
+        
+        document.getElementById('closeNotifications').addEventListener('click', function() {
+            document.getElementById('notificationsPanel').classList.remove('active');
+        });
+        
+        // Toggle Report Problem Panel
+        document.getElementById('reportMenuBtn').addEventListener('click', function() {
+            document.getElementById('reportPanel').classList.add('active');
+            // Close notifications panel if open
+            document.getElementById('notificationsPanel').classList.remove('active');
+        });
+        
+        document.getElementById('closeReport').addEventListener('click', function() {
+            document.getElementById('reportPanel').classList.remove('active');
+        });
+        
+        // Handle Report Form Submission
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const fullName = document.getElementById('fullName').value;
+            const studentId = document.getElementById('studentId').value;
+            const problemType = document.getElementById('problemType').value;
+            const problemMessage = document.getElementById('problemMessage').value;
+            
+            // Show submission confirmation (in a real app, this would send data to server)
+            alert(`Thank you, ${fullName}!\nYour problem report has been submitted successfully.\nAn administrator will review your report shortly.`);
+            
+            // Reset form and close panel
+            this.reset();
+            document.getElementById('reportPanel').classList.remove('active');
+        });
+        
+        // Usage Chart
+        const usageCtx = document.getElementById('usageChart').getContext('2d');
+        const usageChart = new Chart(usageCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Chemicals',
+                    data: [65, 59, 80, 81, 56, 55],
+                    borderColor: '#2c7be5',
+                    tension: 0.1,
+                    fill: false
+                }, {
+                    label: 'Glassware',
+                    data: [28, 48, 40, 19, 86, 27],
+                    borderColor: '#10b981',
+                    tension: 0.1,
+                    fill: false
+                }, {
+                    label: 'Equipment',
+                    data: [35, 25, 30, 45, 40, 50],
+                    borderColor: '#f6c23e',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Usage Count'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Stock Chart
+        const stockCtx = document.getElementById('stockChart').getContext('2d');
+        const stockChart = new Chart(stockCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+                datasets: [{
+                    data: [70, 25, 5],
+                    backgroundColor: [
+                        '#10b981',
+                        '#f6c23e',
+                        '#e74a3b'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+        
+        // Menu Functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
